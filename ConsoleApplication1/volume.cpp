@@ -1,17 +1,16 @@
 // Copyright(C) 2021 https://www.youtube.com/c/ProgrammerCpp
 // 当 YouTube チャンネルをご覧いただいている皆さまのための学習用ソースコードです。再頒布と商業利用は許可しません。
-#define	_CRT_SECURE_NO_WARNINGS
 #include "volume.h"
 #include <ctype.h>
 
-bool read_volume(FILE* fp, struct volume* pVal)
+bool read_volume(std::istream& stm, volume* pVal)
 {
 	char ch;
-	if (fscanf(fp, " %c", &ch) == 1) {
+	if (stm >> ch) {
 		if (isdigit((unsigned char)ch)) {
 			pVal->n = ch - '0';
 			for (;;) {
-				if (fscanf(fp, "%c", &ch) == 1) {
+				if (stm.read(&ch, 1)) {
 					switch (ch) {
 					case ',':
 						continue;
@@ -37,7 +36,7 @@ bool read_volume(FILE* fp, struct volume* pVal)
 	else
 		return false;
 }
-bool write_volume(FILE* fp, const struct volume* p)
+bool write_volume(std::ostream &stm, const volume* p)
 {
-	return fprintf(fp, "%d", p->n) > 0;
+	return (stm << p->n).good();
 }

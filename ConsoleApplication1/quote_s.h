@@ -5,13 +5,13 @@
 #include "price.h"
 #include "volume.h"
 struct quote_s {
-	struct date   日付      ;
-	struct price  始値      ;
-	struct price  高値      ;
-	struct price  安値      ;
-	struct price  終値      ;
-	struct volume 出来高    ;
-	struct price  調整後終値;
+	date   日付      ;
+	price  始値      ;
+	price  高値      ;
+	price  安値      ;
+	price  終値      ;
+	volume 出来高    ;
+	price  調整後終値;
 };
-bool read_quote_s(FILE* fp, struct quote_s* pVal);
-bool write_quote_s(FILE* fp, const struct quote_s* p);
+bool read_quote_s (std::istream& stm,       quote_s* pVal);
+bool write_quote_s(std::ostream& stm, const quote_s* p   );

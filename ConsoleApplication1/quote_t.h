@@ -5,10 +5,10 @@
 #include "price.h"
 #include "change.h"
 struct quote_t {
-	struct date   “ú•t          ;
-	struct price  Šî€‰¿Šz      ;
-	struct change ‘O“ú·        ;
-	struct price  ƒ‘Yi•S–œj;
+	date   “ú•t          ;
+	price  Šî€‰¿Šz      ;
+	change ‘O“ú·        ;
+	price  ƒ‘Yi•S–œj;
 };
-bool read_quote_t(FILE* fp, struct quote_t* pVal);
-bool write_quote_t(FILE* fp, const struct quote_t* p);
+bool read_quote_t (std::istream& stm,       quote_t* pVal);
+bool write_quote_t(std::ostream& stm, const quote_t* p   );

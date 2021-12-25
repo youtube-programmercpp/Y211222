@@ -1,23 +1,22 @@
 // Copyright(C) 2021 https://www.youtube.com/c/ProgrammerCpp
 // 当 YouTube チャンネルをご覧いただいている皆さまのための学習用ソースコードです。再頒布と商業利用は許可しません。
-#define	_CRT_SECURE_NO_WARNINGS
 #include "quote_i.h"
 
-bool read_quote_i(FILE* fp, struct quote_i* pVal)
+bool read_quote_i(std::istream &stm, quote_i* pVal)
 {
-	return read_date (fp, &pVal->日付)
-	&&     read_price(fp, &pVal->始値)
-	&&     read_price(fp, &pVal->高値)
-	&&     read_price(fp, &pVal->安値)
-	&&     read_price(fp, &pVal->終値)
+	return read_date (stm, &pVal->日付)
+	&&     read_price(stm, &pVal->始値)
+	&&     read_price(stm, &pVal->高値)
+	&&     read_price(stm, &pVal->安値)
+	&&     read_price(stm, &pVal->終値)
 	;
 }
-bool write_quote_i(FILE* fp, const struct quote_i* p)
+bool write_quote_i(std::ostream &stm, const quote_i* p)
 {
-	return write_date (fp, &p->日付) && fputc(',' , fp)  > 0
-	&&     write_price(fp, &p->始値) && fputc(',' , fp)  > 0
-	&&     write_price(fp, &p->高値) && fputc(',' , fp)  > 0
-	&&     write_price(fp, &p->安値) && fputc(',' , fp)  > 0
-	&&     write_price(fp, &p->終値) && fputc('\n', fp)  > 0
+	return write_date (stm, &p->日付) && stm << ',' 
+	&&     write_price(stm, &p->始値) && stm << ',' 
+	&&     write_price(stm, &p->高値) && stm << ',' 
+	&&     write_price(stm, &p->安値) && stm << ',' 
+	&&     write_price(stm, &p->終値) && stm << '\n'
 	;
 }

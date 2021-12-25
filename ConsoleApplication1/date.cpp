@@ -1,27 +1,28 @@
 // Copyright(C) 2021 https://www.youtube.com/c/ProgrammerCpp
 // 当 YouTube チャンネルをご覧いただいている皆さまのための学習用ソースコードです。再頒布と商業利用は許可しません。
-#define	_CRT_SECURE_NO_WARNINGS
 #include "date.h"
 #include "dbc.h"
+#include <iomanip>
 
-bool read_date(FILE* fp, struct date* pVal)
+bool read_date(std::istream &stm, date* pVal)
 {
-	union dbc delim_year ;
-	union dbc delim_month;
-	union dbc delim_day  ;
-	return fscanf
-	( fp
-	, "%d%2c%d%2c%d%2c"
-	, &pVal->year , delim_year .s
-	, &pVal->month, delim_month.s
-	, &pVal->day  , delim_day  .s
-	) == 6
-	&& delim_year .w == ((const union dbc*)("年"))->w
-	&& delim_month.w == ((const union dbc*)("月"))->w
-	&& delim_day  .w == ((const union dbc*)("日"))->w
+	dbc delim_year ;
+	dbc delim_month;
+	dbc delim_day  ;
+	return stm && stm >> pVal->year  && stm.read(delim_year .s, sizeof delim_year .s)
+	           && stm >> pVal->month && stm.read(delim_month.s, sizeof delim_month.s)
+	           && stm >> pVal->day   && stm.read(delim_day  .s, sizeof delim_day  .s)
+	           && delim_month.w == reinterpret_cast<const dbc*>("月")->w
+	           && delim_day  .w == reinterpret_cast<const dbc*>("日")->w
 	;
 }
-bool write_date(FILE* fp, const struct date* p)
+bool write_date(std::ostream &stm, const date* p)
 {
-	return fprintf(fp, "%04d/%02d/%02d", p->year, p->month, p->day) > 0;
+	return (stm 
+		<< std::setfill('0')
+		<<        std::setw(4) << p->year 
+		<< '/' << std::setw(2) << p->month
+		<< '/' << std::setw(2) << p->day  
+		<< std::setfill(' ')
+		).good();
 }

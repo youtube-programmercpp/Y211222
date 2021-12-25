@@ -4,11 +4,11 @@
 #include "date.h"
 #include "price.h"
 struct quote_i {
-	struct date  日付;
-	struct price 始値;
-	struct price 高値;
-	struct price 安値;
-	struct price 終値;
+	date  日付;
+	price 始値;
+	price 高値;
+	price 安値;
+	price 終値;
 };
-bool read_quote_i(FILE* fp, struct quote_i* pVal);
-bool write_quote_i(FILE* fp, const struct quote_i* p);
+bool read_quote_i (std::istream& stm,       quote_i* pVal);
+bool write_quote_i(std::ostream& stm, const quote_i* p   );

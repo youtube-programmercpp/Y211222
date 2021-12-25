@@ -1,14 +1,15 @@
 // Copyright(C) 2021 https://www.youtube.com/c/ProgrammerCpp
 // 当 YouTube チャンネルをご覧いただいている皆さまのための学習用ソースコードです。再頒布と商業利用は許可しません。
-#define	_CRT_SECURE_NO_WARNINGS
 #include "quote_t.h"
 #include "quote_i.h"
 #include "quote_s.h"
+#include <fstream>
+#include <iostream>
 
-int read_header(FILE* fp)
+int read_header(std::istream &stm)
 {
 	for (int columns = 1;;) {
-		switch (fgetc(fp)) {
+		switch (stm.get()) {
 		case EOF:
 			return 0;
 		case '\t':
@@ -21,15 +22,14 @@ int read_header(FILE* fp)
 }
 int to_csv_t(const char* filename)
 {
-	FILE* const fp = fopen(filename, "r");
-	if (fp) {
+	auto stm = std::ifstream(filename);
+	if (stm) {
 		int rows = 0;
-		const int columns = read_header(fp);
+		const int columns = read_header(stm);
 		if (columns == 4) {
-			for (struct quote_t rec; read_quote_t(fp, &rec); ++rows)
-				write_quote_t(stdout, &rec);
+			for (quote_t rec; read_quote_t(stm, &rec); ++rows)
+				write_quote_t(std::cout, &rec);
 		}
-		fclose(fp);
 		return rows;
 	}
 	else
@@ -37,15 +37,14 @@ int to_csv_t(const char* filename)
 }
 int to_csv_i(const char* filename)
 {
-	FILE* const fp = fopen(filename, "r");
-	if (fp) {
+	auto stm = std::ifstream(filename);
+	if (stm) {
 		int rows = 0;
-		const int columns = read_header(fp);
+		const int columns = read_header(stm);
 		if (columns == 5) {
-			for (struct quote_i rec; read_quote_i(fp, &rec); ++rows)
-				write_quote_i(stdout, &rec);
+			for (quote_i rec; read_quote_i(stm, &rec); ++rows)
+				write_quote_i(std::cout, &rec);
 		}
-		fclose(fp);
 		return rows;
 	}
 	else
@@ -53,15 +52,14 @@ int to_csv_i(const char* filename)
 }
 int to_csv_s(const char* filename)
 {
-	FILE* const fp = fopen(filename, "r");
-	if (fp) {
+	auto stm = std::ifstream(filename);
+	if (stm) {
 		int rows = 0;
-		const int columns = read_header(fp);
+		const int columns = read_header(stm);
 		if (columns == 7) {
-			for (struct quote_s rec; read_quote_s(fp, &rec); ++rows)
-				write_quote_s(stdout, &rec);
+			for (quote_s rec; read_quote_s(stm, &rec); ++rows)
+				write_quote_s(std::cout, &rec);
 		}
-		fclose(fp);
 		return rows;
 	}
 	else
