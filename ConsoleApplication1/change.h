@@ -5,6 +5,6 @@
 #include <ostream>
 struct change {
 	int n;
+	friend std::istream& operator>>(std::istream& stm,       change& r);
+	friend std::ostream& operator<<(std::ostream& stm, const change& r);
 };
-bool read_change (std::istream& stm,       change* p   );
-bool write_change(std::ostream& stm, const change* pVal);

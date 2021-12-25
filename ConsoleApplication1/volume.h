@@ -5,6 +5,6 @@
 #include <ostream>
 struct volume {
 	int n;
+	friend std::istream& operator>>(std::istream& stm,       volume& r);
+	friend std::ostream& operator<<(std::ostream& stm, const volume& r);
 };
-bool read_volume (std::istream& stm,       volume* pVal);
-bool write_volume(std::ostream& stm, const volume* p   );

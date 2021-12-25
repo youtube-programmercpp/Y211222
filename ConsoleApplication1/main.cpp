@@ -6,68 +6,41 @@
 #include <fstream>
 #include <iostream>
 
-int read_header(std::istream &stm)
-{
-	for (int columns = 1;;) {
-		switch (stm.get()) {
-		case EOF:
-			return 0;
-		case '\t':
-			++columns;
-			continue;
-		case '\n':
-			return columns;
+template<class T>struct to_csv {
+	std::ostream& ostm;
+
+	static const int column_count;
+	friend std::istream& operator>>(std::istream& istm, to_csv&& r)
+	{
+		if (istm) {
+			const int columns = [&istm]()->int
+			{
+				for (int retval = 1;;) {
+					switch (istm.get()) {
+					case EOF:
+						return 0;
+					case '\t':
+						++retval;
+						continue;
+					case '\n':
+						return retval;
+					}
+				}
+			}();
+			if (columns == column_count) {
+				for (T rec; istm >> rec;)
+					r.ostm << rec;
+			}
 		}
+		return istm;
 	}
-}
-int to_csv_t(const char* filename)
-{
-	auto stm = std::ifstream(filename);
-	if (stm) {
-		int rows = 0;
-		const int columns = read_header(stm);
-		if (columns == 4) {
-			for (quote_t rec; read_quote_t(stm, &rec); ++rows)
-				write_quote_t(std::cout, &rec);
-		}
-		return rows;
-	}
-	else
-		return 0;
-}
-int to_csv_i(const char* filename)
-{
-	auto stm = std::ifstream(filename);
-	if (stm) {
-		int rows = 0;
-		const int columns = read_header(stm);
-		if (columns == 5) {
-			for (quote_i rec; read_quote_i(stm, &rec); ++rows)
-				write_quote_i(std::cout, &rec);
-		}
-		return rows;
-	}
-	else
-		return 0;
-}
-int to_csv_s(const char* filename)
-{
-	auto stm = std::ifstream(filename);
-	if (stm) {
-		int rows = 0;
-		const int columns = read_header(stm);
-		if (columns == 7) {
-			for (quote_s rec; read_quote_s(stm, &rec); ++rows)
-				write_quote_s(std::cout, &rec);
-		}
-		return rows;
-	}
-	else
-		return 0;
-}
+};
+const int to_csv<quote_i>::column_count = 5;
+const int to_csv<quote_s>::column_count = 7;
+const int to_csv<quote_t>::column_count = 4;
 int main()
 {
-	to_csv_i("..\\998407.txt");
-	to_csv_s("..\\8316.txt");
-	to_csv_t("..\\01312055.txt");
+	std::ifstream("..\\998407.txt"  ) >> to_csv<quote_i>{std::cout};
+	std::ifstream("..\\8316.txt"    ) >> to_csv<quote_s>{std::cout};
+	std::ifstream("..\\01312055.txt") >> to_csv<quote_t>{std::cout};
 }

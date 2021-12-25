@@ -3,40 +3,40 @@
 #include "volume.h"
 #include <ctype.h>
 
-bool read_volume(std::istream& stm, volume* pVal)
+std::istream& operator>>(std::istream& stm, volume& r)
 {
 	char ch;
 	if (stm >> ch) {
 		if (isdigit((unsigned char)ch)) {
-			pVal->n = ch - '0';
+			r.n = ch - '0';
 			for (;;) {
 				if (stm.read(&ch, 1)) {
-					switch (ch) {
-					case ',':
+					if (ch == ',')
 						continue;
-					default:
-						if (isdigit((unsigned char)ch)) {
-							pVal->n *= 10;
-							pVal->n += ch - '0';
-							break;
-						}
-						else if (isspace((unsigned char)ch))
-							return true;
-						else
-							return false;
+					else if (isdigit((unsigned char)ch)) {
+						(r.n *= 10) += ch - '0';
+						continue;
+					}
+					else if (isspace((unsigned char)ch))
+						return stm;
+					else {
+						stm.setstate(std::ios_base::failbit);
+						return stm;
 					}
 				}
 				else
-					return false;
+					return stm;
 			}
 		}
-		else
-			return false;
+		else {
+			stm.setstate(std::ios_base::failbit);
+			return stm;
+		}
 	}
 	else
-		return false;
+		return stm;
 }
-bool write_volume(std::ostream &stm, const volume* p)
+std::ostream& operator<<(std::ostream &stm, const volume& r)
 {
-	return (stm << p->n).good();
+	return stm << r.n;
 }

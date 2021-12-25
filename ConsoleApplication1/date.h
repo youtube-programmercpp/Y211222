@@ -7,6 +7,6 @@ struct date {
 	int year ;
 	int month;
 	int day  ;
+	friend std::istream& operator>>(std::istream& stm,       date& r);
+	friend std::ostream& operator<<(std::ostream& stm, const date& r);
 };
-bool read_date (std::istream& stm,       date* pVal);
-bool write_date(std::ostream& stm, const date* p   );

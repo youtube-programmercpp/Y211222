@@ -9,6 +9,6 @@ struct quote_t {
 	price  Šî€‰¿Šz      ;
 	change ‘O“ú·        ;
 	price  ƒŽ‘ŽYi•S–œj;
+	friend std::istream& operator>>(std::istream& stm,       quote_t& r);
+	friend std::ostream& operator<<(std::ostream& stm, const quote_t& r);
 };
-bool read_quote_t (std::istream& stm,       quote_t* pVal);
-bool write_quote_t(std::ostream& stm, const quote_t* p   );

@@ -3,56 +3,73 @@
 #include "change.h"
 #include <ctype.h>
 
-static bool read_digit_sequence(std::istream &stm, char* pch, bool minus, int* pVal)
-{
-	if (isdigit((unsigned char)*pch)) {
-		for (*pVal = *pch - '0';;) {
-			if (stm.read(pch, 1)) {
-				if (*pch == ',')
-					continue;
-				else if (isdigit((unsigned char)*pch)) {
-					*pVal *= 10;
-					*pVal += *pch - '0';
-					continue;
-				}
-				else {
-					if (minus)
-						*pVal *= -1;
-					return true;
+struct digit_sequence {
+	char & ch    ;
+	bool   minus ;
+	int  & value ;
+
+	friend std::istream& operator>>(std::istream &stm, digit_sequence&& r)
+	{
+		if (stm.read(&r.ch, 1)) {
+			if (isdigit((unsigned char)r.ch)) {
+				for (r.value = r.ch - '0';;) {
+					if (stm.read(&r.ch, 1)) {
+						if (r.ch == ',')
+							continue;
+						else if (isdigit((unsigned char)r.ch)) {
+							(r.value *= 10) += r.ch - '0';
+							continue;
+						}
+						else if (isspace((unsigned char)r.ch)) {
+							if (r.minus)
+								r.value *= -1;
+							return stm;
+						}
+						else {
+							//unexpected non-space non-digit character immediately after last digit
+							stm.setstate(std::ios_base::failbit);
+							return stm;
+						}
+					}
+					else
+						return stm;// read error
 				}
 			}
-			else
-				return false;
+			else {
+				//unexpected non-digit character immediately after sign
+				stm.setstate(std::ios_base::failbit);
+				return stm;
+			}
 		}
+		else
+			return stm;//read error
 	}
-	else
-		return false;
-}
+};
 
-bool read_change(std::istream &stm, change* pVal)
+std::istream& operator>>(std::istream &stm, change& r)
 {
 	char ch;
 	if (stm >> ch) {
 		switch (ch) {
-		case '+':
-			return stm.read(&ch, 1) && read_digit_sequence(stm, &ch, false, &pVal->n) && isspace((unsigned char)ch);
-		case '-':
-			return stm.read(&ch, 1) && read_digit_sequence(stm, &ch, true,  &pVal->n) && isspace((unsigned char)ch);
+		case '+': return stm >> digit_sequence{ch, false, r.n};
+		case '-': return stm >> digit_sequence{ch, true,  r.n};
 		case '0':
-			if (stm.read(&ch, 1) && isspace((unsigned char)ch)) {
-				pVal->n = 0;
-				return true;
+			if (stm.read(&ch, 1)) {
+				if (isspace((unsigned char)ch))
+					r.n = 0;
+				else
+					stm.setstate(std::ios_base::failbit);
 			}
-			else
-				return false;
+			return stm;
 		default:
-			return false;
+			stm.setstate(std::ios_base::failbit);
+			return stm;
 		}
 	}
 	else
-		return false;
+		return stm;
 }
-bool write_change(std::ostream &stm, const change* p)
+std::ostream& operator<<(std::ostream &stm, const change& r)
 {
-	return (stm << p->n).good();
+	return stm << r.n;
 }

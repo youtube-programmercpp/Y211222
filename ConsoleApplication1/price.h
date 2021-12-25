@@ -6,6 +6,6 @@
 struct price {
 	int yen;
 	int sen;
+	friend std::istream& operator>>(std::istream& stm,       price& r);
+	friend std::ostream& operator<<(std::ostream& stm, const price& r);
 };
-bool read_price (std::istream& stm,       price* pVal);
-bool write_price(std::ostream& stm, const price* p   );

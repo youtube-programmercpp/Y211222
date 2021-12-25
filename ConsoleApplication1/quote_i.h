@@ -3,12 +3,18 @@
 #pragma once
 #include "date.h"
 #include "price.h"
+
+struct quote_i;
+std::istream& operator>>(std::istream& stm,       quote_i& r);
+std::ostream& operator<<(std::ostream& stm, const quote_i& r);
+
+
 struct quote_i {
 	date  日付;
 	price 始値;
 	price 高値;
 	price 安値;
 	price 終値;
+	friend std::istream& operator>>(std::istream& stm,       quote_i& r);
+	friend std::ostream& operator<<(std::ostream& stm, const quote_i& r);
 };
-bool read_quote_i (std::istream& stm,       quote_i* pVal);
-bool write_quote_i(std::ostream& stm, const quote_i* p   );

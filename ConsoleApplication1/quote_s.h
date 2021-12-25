@@ -12,6 +12,6 @@ struct quote_s {
 	price  終値      ;
 	volume 出来高    ;
 	price  調整後終値;
+	friend std::istream& operator>>(std::istream& stm,       quote_s& r);
+	friend std::ostream& operator<<(std::ostream& stm, const quote_s& r);
 };
-bool read_quote_s (std::istream& stm,       quote_s* pVal);
-bool write_quote_s(std::ostream& stm, const quote_s* p   );

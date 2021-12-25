@@ -1,28 +1,32 @@
 // Copyright(C) 2021 https://www.youtube.com/c/ProgrammerCpp
 // 当 YouTube チャンネルをご覧いただいている皆さまのための学習用ソースコードです。再頒布と商業利用は許可しません。
 #include "date.h"
-#include "dbc.h"
 #include <iomanip>
 
-bool read_date(std::istream &stm, date* pVal)
+template<size_t length_including_null>inline std::istream& operator>>(std::istream& istm, const char(&r)[length_including_null])
 {
-	dbc delim_year ;
-	dbc delim_month;
-	dbc delim_day  ;
-	return stm && stm >> pVal->year  && stm.read(delim_year .s, sizeof delim_year .s)
-	           && stm >> pVal->month && stm.read(delim_month.s, sizeof delim_month.s)
-	           && stm >> pVal->day   && stm.read(delim_day  .s, sizeof delim_day  .s)
-	           && delim_month.w == reinterpret_cast<const dbc*>("月")->w
-	           && delim_day  .w == reinterpret_cast<const dbc*>("日")->w
-	;
+	char buf[length_including_null - 1];
+	if (istm.read(buf, length_including_null - 1)) {
+		if (memcmp(buf, r, length_including_null - 1))
+			istm.setstate(std::ios_base::failbit);
+	}
+	return istm;
 }
-bool write_date(std::ostream &stm, const date* p)
+
+std::istream& operator>>(std::istream &stm, date& r)
 {
-	return (stm 
+	return stm
+		>> r.year  >> "年"
+		>> r.month >> "月"
+		>> r.day   >> "日"
+		;
+}
+std::ostream& operator<<(std::ostream &stm, const date& r)
+{
+	return stm 
 		<< std::setfill('0')
-		<<        std::setw(4) << p->year 
-		<< '/' << std::setw(2) << p->month
-		<< '/' << std::setw(2) << p->day  
-		<< std::setfill(' ')
-		).good();
+		<<        std::setw(4) << r.year 
+		<< '/' << std::setw(2) << r.month
+		<< '/' << std::setw(2) << r.day  
+		<< std::setfill(' ');
 }
